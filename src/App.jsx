@@ -1,26 +1,29 @@
 import React from "react";
 
 const App = () => {
-  const [item, setItem] = React.useState();
+  const [item, setItem] = React.useState({
+    value: '',
+    updating:false
+  });
   const [list, setList] = React.useState([]);
-  const [value, setValue] = React.useState("");
-  const[isUpdated, setIsUpdated] = React.useState(false)
+  const[inputValue, setInputValue]=React.useState("");
+
 
   React.useEffect(() => {
     setList(JSON.parse(localStorage.getItem("data")) || []);
   }, []);
 
   function handleChange(e) {
-    const item =e.target.value;
-    setValue(item)
-    console.log(value);
-    setItem(value);
+    setItem(prev => ({
+      ...prev,
+      value: e.target.value
+    }))
   }
 
   function add() {
-    if (!isUpdated) {
 
-      if (item.length) {
+
+      if (item.value.length) {
         list.push(item);
         setList([...list]);
         localStorage.setItem("data", JSON.stringify(list));
@@ -28,7 +31,7 @@ const App = () => {
         console.log("no text provided");
       }
 
-    }
+
 
   }
 
@@ -39,19 +42,27 @@ const App = () => {
   }
 
   function edit(number) {
-    setIsUpdated(true);
+    list[number].updating = true;
+    console.log(list);
+    list.map(listItem => {
+      if (listItem.updating) {
+        let targetIndex = list.indexOf(listItem)
+
+      }
+    })
+
   }
 
   function reset() {
     list.splice(0, list.length);
     setList([...list]);
     localStorage.clear()
-    setIsUpdated(false);
+
   }
 
   let listElements = list.map((listItem, index) => (
     <div key={index} className="list-item">
-      <span className="list-item-text">{listItem}</span>
+      <span className="list-item-text">{listItem.value}</span>
       <button className="edit-btn" onClick={() => edit(index)}>
         <i className="fa-regular fa-pen-to-square"></i>
       </button>
@@ -63,6 +74,7 @@ const App = () => {
       </button>
     </div>
   ));
+
 
   return (
     <main>
@@ -76,7 +88,7 @@ const App = () => {
           id=""
           placeholder="Add Something..."
         />
-        <button className="btn btn-outline-info py-1" onClick={add}>{isUpdated?"Update":"Add"}</button>
+        <button className="btn btn-outline-info py-1" onClick={add}>Add</button>
       </div>
       <div>{listElements}</div>
       <div className="reset-btn">
