@@ -11,7 +11,10 @@ const App = () => {
   }, []);
 
   function handleChange(e) {
-    setItem(e.target.value);
+    const item =e.target.value;
+    setValue(item)
+    console.log(value);
+    setItem(value);
   }
 
   function add() {
@@ -63,6 +66,7 @@ const App = () => {
 
   return (
     <main>
+      <p className="text-center title ">What's Your Plan?</p>
       <div className="input-box-container">
 
         <input
