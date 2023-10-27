@@ -2,37 +2,36 @@ import React from "react";
 
 const App = () => {
   const [item, setItem] = React.useState({
-    value: '',
-    updating:false
+    value: "",
+    updating: false,
   });
   const [list, setList] = React.useState([]);
-  const[inputValue, setInputValue]=React.useState("");
-
+  const [inputValue, setInputValue] = React.useState("");
+  const [updateButton, setUpdateButton] = React.useState(false);
 
   React.useEffect(() => {
     setList(JSON.parse(localStorage.getItem("data")) || []);
   }, []);
 
   function handleChange(e) {
-    setItem(prev => ({
+    setInputValue(e.target.value);
+    setItem((prev) => ({
       ...prev,
-      value: e.target.value
-    }))
+      value: e.target.value,
+    }));
   }
 
   function add() {
-
-
-      if (item.value.length) {
-        list.push(item);
-        setList([...list]);
-        localStorage.setItem("data", JSON.stringify(list));
-      } else {
-        console.log("no text provided");
-      }
-
-
-
+    if (item.value.length) {
+      list.push(item);
+      setList([...list]);
+      localStorage.setItem("data", JSON.stringify(list));
+      setInputValue("");
+      setUpdateButton(false);
+      setItem('')
+    } else {
+      alert("Write something first!!!");
+    }
   }
 
   function remove(number) {
@@ -42,58 +41,60 @@ const App = () => {
   }
 
   function edit(number) {
+    setUpdateButton(true);
     list[number].updating = true;
-    console.log(list);
-    list.map(listItem => {
+    list.map((listItem) => {
       if (listItem.updating) {
-        let targetIndex = list.indexOf(listItem)
-
+        let targetIndex = list.indexOf(listItem);
+        setInputValue(list[targetIndex].value);
+        remove(targetIndex);
       }
-    })
-
+    });
   }
 
   function reset() {
     list.splice(0, list.length);
     setList([...list]);
-    localStorage.clear()
-
+    localStorage.clear();
+    setInputValue("");
   }
 
   let listElements = list.map((listItem, index) => (
     <div key={index} className="list-item">
+      <span className="index">{index + 1}.</span>
       <span className="list-item-text">{listItem.value}</span>
       <button className="edit-btn" onClick={() => edit(index)}>
         <i className="fa-regular fa-pen-to-square"></i>
       </button>
-      <button
-        className="delete-btn"
-        onClick={() => remove(index)}
-      >
+      <button className="delete-btn" onClick={() => remove(index)}>
         <i className="fa-solid fa-trash-can"></i>
       </button>
     </div>
   ));
 
-
   return (
     <main>
-      <p className="text-center title ">What's Your Plan?</p>
+      <p className="text-center title ">Wanna note something?</p>
       <div className="input-box-container">
-
         <input
           className="form-control input-box"
           type="text"
           onChange={handleChange}
-          id=""
+          value={inputValue}
           placeholder="Add Something..."
         />
-        <button className="btn btn-outline-info py-1" onClick={add}>Add</button>
+
+        <button className="btn btn-outline-info py-1" onClick={add}>
+          {!updateButton ? "Add" : "Update"}
+        </button>
       </div>
       <div>{listElements}</div>
       <div className="reset-btn">
-        {list.length>0 && <button className="btn btn-danger py-1" onClick={reset}>Delete All</button>}
-
+        {list.length > 0 && (
+          <button className="btn btn-danger py-1" onClick={reset}>
+            Delete All
+          </button>
+        )}
       </div>
     </main>
   );
