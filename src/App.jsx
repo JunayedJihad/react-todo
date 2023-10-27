@@ -1,8 +1,8 @@
 import React from "react";
 
 const App = () => {
+  const [item, setItem] = React.useState();
   const [list, setList] = React.useState([]);
-  const [item, setItem] = React.useState("");
   const [value, setValue] = React.useState("");
   const[isUpdated, setIsUpdated] = React.useState(false)
 
@@ -25,14 +25,8 @@ const App = () => {
         console.log("no text provided");
       }
 
-    } else {
-      if (item.length) {
-
-      } else {
-        console.log("no text provided");
-
-      }
     }
+
   }
 
   function remove(number) {
@@ -49,28 +43,43 @@ const App = () => {
     list.splice(0, list.length);
     setList([...list]);
     localStorage.clear()
+    setIsUpdated(false);
   }
 
   let listElements = list.map((listItem, index) => (
-    <div key={index}>
-      <span>{listItem}</span>
-      <button onClick={() => edit(index)}>Edit</button>
-      <button onClick={() => remove(index)}>Remove</button>
+    <div key={index} className="list-item">
+      <span className="list-item-text">{listItem}</span>
+      <button className="edit-btn" onClick={() => edit(index)}>
+        <i className="fa-regular fa-pen-to-square"></i>
+      </button>
+      <button
+        className="delete-btn"
+        onClick={() => remove(index)}
+      >
+        <i className="fa-solid fa-trash-can"></i>
+      </button>
     </div>
   ));
 
   return (
-    <div>
-      <input
-        type="text"
-        onChange={handleChange}
-        id=""
-        placeholder="Add Something..."
-      />
-      <button onClick={add}>{isUpdated?"Update":"Add"}</button>
+    <main>
+      <div className="input-box-container">
+
+        <input
+          className="form-control input-box"
+          type="text"
+          onChange={handleChange}
+          id=""
+          placeholder="Add Something..."
+        />
+        <button className="btn btn-outline-info py-1" onClick={add}>{isUpdated?"Update":"Add"}</button>
+      </div>
       <div>{listElements}</div>
-      {list.length>0 && <button onClick={reset}>Delete All</button>}
-    </div>
+      <div className="reset-btn">
+        {list.length>0 && <button className="btn btn-danger py-1" onClick={reset}>Delete All</button>}
+
+      </div>
+    </main>
   );
 };
 
